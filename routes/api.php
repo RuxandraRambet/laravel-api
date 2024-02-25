@@ -19,5 +19,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('projects', [ProjectController::class, 'index']);
-Route::get('projects/{slug}', [ProjectController::class, 'show']);
+// Route::get('projects', [ProjectController::class, 'index']);
+// Route::get('projects/{slug}', [ProjectController::class, 'show']);
+
+Route::resource('projects', ProjectController::class);

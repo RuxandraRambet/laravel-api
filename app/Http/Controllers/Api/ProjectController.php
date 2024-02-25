@@ -10,14 +10,33 @@ class ProjectController extends Controller
 {
     public function index()
     {
+        request()->validate([
+            'key' => ['nullable', 'string', 'min:3']
+        ]);
+
+
+        if (request()->key) {
+            $projects = Project::where('title', 'LIKE', '%' . request()->key . '%')->orWhere('description', 'LIKE', '%' . request()->key . '%')->paginate(9);
+        } else {
+            $projects = Project::with('type', 'technologies')->paginate(9);
+        }
+
 
         // $projects = Project::all();
-        $projects = Project::with('type', 'technologies')->paginate(9);
+        // $projects = Project::with('type', 'technologies')->paginate(9);
         
-        return response()->json([
-            'status' => 'success',
-            'results' => $projects
-        ]);
+        if ($projects) {
+            return response()->json([
+                'status' => true,
+                'result' => $projects
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'result' => []
+            ], 200);
+        }
+      
     }
 
     public function show(string $slug)
@@ -25,7 +44,7 @@ class ProjectController extends Controller
         $project = Project::where('slug', $slug)->with('type', 'technologies')->first();
         return response()->json([
             'status' => 'success',
-            'results' => $project
+            'result' => $project
         ]);
     }
 }
